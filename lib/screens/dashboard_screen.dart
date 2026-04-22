@@ -1,346 +1,605 @@
 import 'package:flutter/material.dart';
-import 'chat_screen.dart';
 import 'services_screen.dart';
-import '../main.dart';
 
-class DashboardScreen extends StatelessWidget {
-  const DashboardScreen({super.key});
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF6FAF8), // Precise Luminous background
+      backgroundColor: const Color(0xFF09090B),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: const Color(0xFF09090B),
         elevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 16.0),
-          child: CircleAvatar(
-            backgroundColor: const Color(0xFFD3DFD3),
-            child: ClipOval(
-              child: Image.network('https://randomuser.me/api/portraits/men/75.jpg'), 
+        automaticallyImplyLeading: false,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text("Your Location", style: TextStyle(color: Color(0xFF71717A), fontSize: 12)),
+            Row(
+              children: const [
+                Text("Indiranagar, Bengaluru", 
+                  style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
+                Icon(Icons.keyboard_arrow_down, color: Color(0xFFA78BFA), size: 18),
+              ],
             ),
-          ),
-        ),
-        title: const Text(
-          'Elders App',
-          style: TextStyle(color: Color(0xFF006D5B), fontWeight: FontWeight.w900, fontSize: 20),
+          ],
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.notifications_none_rounded, color: Color(0xFF006D5B)),
+            icon: const Icon(Icons.notifications_none_rounded, color: Colors.white),
             onPressed: () {},
           ),
           const SizedBox(width: 8),
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Hello, Eleanor.', style: TextStyle(fontSize: 34, fontWeight: FontWeight.w900, letterSpacing: -1.0)),
-            const Text('Your sanctuary is ready for the day.', style: TextStyle(fontSize: 16, color: Colors.black45, fontWeight: FontWeight.w500)),
-            const SizedBox(height: 25),
-
-            // Search Bar
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(color: const Color(0xFFE2E9E2), borderRadius: BorderRadius.circular(12)),
-              child: const TextField(
-                decoration: InputDecoration(
-                  hintText: 'Search services or help...',
-                  hintStyle: TextStyle(color: Colors.black38, fontSize: 15),
-                  icon: Icon(Icons.search, color: Color(0xFF006D5B), size: 20),
-                  border: InputBorder.none,
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 1. Professional Search Bar
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                height: 54,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF18181B),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFF27272A)),
+                ),
+                child: Row(
+                  children: const [
+                    Icon(Icons.search, color: Color(0xFFA78BFA)),
+                    SizedBox(width: 12),
+                    Text("Search for 'Nursing Care'...", 
+                      style: TextStyle(color: Color(0xFF52525B), fontSize: 15)),
+                  ],
                 ),
               ),
-            ),
-            const SizedBox(height: 25),
+              const SizedBox(height: 24),
 
-            // Heart Vitality Card
-            _buildMedicineCard(),
-            const SizedBox(height: 30),
+              // 2. Active Care Tracking Card
+              _buildActiveStatusCard(),
+              const SizedBox(height: 24),
 
-            // Services Grid (2x2)
-            Row(
-              children: [
-                Expanded(child: _buildServiceTile(Icons.shopping_basket_outlined, 'Grocery')),
-                const SizedBox(width: 16),
-                Expanded(child: _buildServiceTile(Icons.medical_services_outlined, 'Medicine')),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(child: _buildServiceTile(Icons.medical_information_outlined, 'Help at Home')),
-                const SizedBox(width: 16),
-                Expanded(child: _buildServiceTile(Icons.more_horiz, 'All Services')),
-              ],
-            ),
-            const SizedBox(height: 40),
+                            // 7. Service Categories Grid
+              const Text("Explore Services", 
+                style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900)),
+              const SizedBox(height: 16),
+              GridView.count(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisCount: 4,
+                mainAxisSpacing: 20,
+                crossAxisSpacing: 12,
+                childAspectRatio: 0.8,
+                children: [
+                  _buildCategoryItem("Nursing", Icons.medical_services_outlined,context),
+                  _buildCategoryItem("Physio", Icons.accessibility_new_rounded,context),
+                  _buildCategoryItem("Companion", Icons.people_outline_rounded,context),
+                  _buildCategoryItem("Emergency", Icons.emergency_share_outlined,context),
+                  _buildCategoryItem("Pharmacy", Icons.medication_outlined,context),
+                  _buildCategoryItem("Lab Test", Icons.biotech_outlined,context),
+                  _buildCategoryItem("Dietician", Icons.restaurant_outlined,context),
+                  _buildCategoryItem("More", Icons.grid_view_rounded,context),
+                ],
+              ),
+              const SizedBox(height: 32),
 
-            // Upcoming Bookings Section
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('Your Bookings', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900, height: 1.1)),
-                const Text('View all', textAlign: TextAlign.right, style: TextStyle(color: Color(0xFF006D5B), fontWeight: FontWeight.w800, fontSize: 13)),
-              ],
-            ),
-            const SizedBox(height: 16),
-            _buildBookingCard('Hospital Transport', 'Tomorrow,\n09:30 AM', 'Confirmed', const Color(0xFFE0F2F1), const Color(0xFF006D5B), Icons.directions_car_filled_rounded),
-            _buildBookingCard('Home Cleaning', 'Fri, Oct 27 •\n2:00 PM', 'Pending', const Color(0xFFF5F5F5), Colors.black45, Icons.cleaning_services_rounded),
-            
-            const SizedBox(height: 40),
+              // 8. Promotional Banner
+              _buildPromoBanner(context),
+              const SizedBox(height: 24),
 
-            // Care Wallet
-            _buildWalletCard(),
-            const SizedBox(height: 40),
+              // 5. Medicine Remainder
+              const Text("Medicine Remainder", 
+                style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900)),
+              const SizedBox(height: 16),
+              _buildMedicineRemainder(),
+              const SizedBox(height: 32),
 
-            // Connect & Support Section
-            const Text('Connect & Support', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900)),
-            const SizedBox(height: 16),
-_buildSupportItem(
-  'Lumi AI Guide',
-  'Ask me anything about your care',
-  const Color(0xFFF6FAF8),
-  'https://i.pravatar.cc/100?u=ai',
-  context,
-),
+              // 👉 ADD THIS WHERE YOU WANT (after medicine remainder)
+_buildImageSection(),
+const SizedBox(height: 32),
 
-const SizedBox(height: 12),
+              // 6. NEW: Social Events (Premium Card Style)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: const [
+                  Text("Social Events", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900)),
+                  Text("View all", style: TextStyle(color: Color(0xFFA78BFA), fontSize: 12, fontWeight: FontWeight.bold)),
+                ],
+              ),
+              const SizedBox(height: 16),
+              _buildSocialEvents(),
+              const SizedBox(height: 32),
 
-_buildSupportItem(
-  'Peer Support Chat',
-  '3 active conversations now',
-  const Color(0xFFFFF9E6),
-  null,
-  context,
-),
-            const SizedBox(height: 40),
+              // 3. NEW: Wallet & Chat Quick Actions (Professional Row)
+              Row(
+                children: [
+                  _buildQuickAction("Wallet", Icons.account_balance_wallet_rounded, "₹2,450", const Color(0xFF34D399)),
+                  const SizedBox(width: 10),
+                  _buildQuickAction("Peer Chat", Icons.forum_rounded, "Join Room", const Color(0xFF60A5FA)),
+                  const SizedBox(width: 10),
+                  _buildQuickAction("AI Assistant", Icons.auto_awesome_rounded, "Ask GPT", const Color(0xFFA78BFA)),
+                ],
+              ),
+              const SizedBox(height: 32),
 
-            // SOS Section
-            _buildSOSCard(),
-            const SizedBox(height: 120),
-          ],
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: _buildBottomNav(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        backgroundColor: const Color(0xFF006D5B),
-        shape: const CircleBorder(),
-        child: const Icon(Icons.add, color: Colors.white, size: 30),
+    );
+  }
+
+  // Helper for Wallet/Chat Quick Actions
+  Widget _buildQuickAction(String label, IconData icon, String subtext, Color iconColor) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+        decoration: BoxDecoration(
+          color: const Color(0xFF18181B),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFF27272A)),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: iconColor, size: 22),
+            const SizedBox(height: 8),
+            Text(label, style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 2),
+            Text(subtext, style: const TextStyle(color: Color(0xFF71717A), fontSize: 9)),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildMedicineCard() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(color: const Color(0xFF00897B), borderRadius: BorderRadius.circular(28)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(20)),
-            child: const Row(mainAxisSize: MainAxisSize.min, children: [
-              Icon(Icons.access_time_filled_rounded, color: Colors.white, size: 14),
-              SizedBox(width: 6),
-              Text('NEXT MEDICINE', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w900)),
-            ]),
-          ),
-          const SizedBox(height: 16),
-          const Text('Heart Vitality', style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w900)),
-          const Text("It's time for your morning ACE inhibitor. Take with a glass of water after breakfast.",
-            style: TextStyle(color: Colors.white70, fontSize: 15, height: 1.4)),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFFB300),
-              foregroundColor: Colors.black,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-              padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
-              elevation: 0,
+Widget _buildSocialEvents() {
+  return Column(
+    children: [
+      // Event 1: Senior Morning Yoga
+      _buildSingleEventCard(
+        day: "SAT",
+        date: "25",
+        tag: "COMMUNITY",
+        tagColor: const Color(0xFFFBBF24),
+        time: "6:30 AM",
+        title: "Senior Morning Yoga",
+        location: "Cubbon Park, Bengaluru",
+        bgIcon: Icons.celebration_rounded,
+      ),
+      const SizedBox(height: 16),
+
+      // Event 2: Digital Literacy
+      _buildSingleEventCard(
+        day: "MON",
+        date: "27",
+        tag: "LEARNING",
+        tagColor: const Color(0xFFA78BFA),
+        time: "11:00 AM",
+        title: "Digital Literacy Workshop",
+        location: "Indiranagar Library",
+        bgIcon: Icons.devices_rounded,
+      ),
+      const SizedBox(height: 16),
+
+      // Event 3: Health Checkup
+      _buildSingleEventCard(
+        day: "WED",
+        date: "29",
+        tag: "HEALTH",
+        tagColor: const Color(0xFF34D399),
+        time: "10:30 AM",
+        title: "General Health Checkup",
+        location: "Community Center",
+        bgIcon: Icons.medical_services_rounded,
+      ),
+    ],
+  );
+}
+
+// 👉 IMAGE FROM URL
+Widget _buildImageSection() {
+  return Container(
+    width: double.infinity,
+    height: 160,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(20),
+      border: Border.all(color: const Color(0xFF27272A)),
+    ),
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(5),
+      child: Image.network(
+        'https://seniorsafetyapp.com/wp-content/uploads/2024/04/Senior-Safety-App-Beyond-Tracking-How-Family-Locator-App-Redefines-Elder-Care.png', // 🔥 replace with your URL
+        fit: BoxFit.cover,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return const Center(
+            child: CircularProgressIndicator(
+              color: Color(0xFFA78BFA),
             ),
-            child: const Text("I've Taken It", style: TextStyle(fontWeight: FontWeight.w900)),
-          ),
-        ],
+          );
+        },
+        errorBuilder: (context, error, stackTrace) {
+          return const Center(
+            child: Icon(Icons.broken_image, color: Color(0xFF71717A)),
+          );
+        },
       ),
-    );
-  }
-
-Widget _buildServiceTile(IconData icon, String label) {
-  return GestureDetector(
-    onTap: () {
-      if (label == 'All Services') {
-        Navigator.push(
-          navigatorKey.currentContext!,
-          MaterialPageRoute(
-            builder: (context) => const LuminousServicesScreen(),
-          ),
-        );
-      }
-    },
-    child: Container(
-      padding: const EdgeInsets.symmetric(vertical: 24),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24)),
-      child: Column(children: [
-        CircleAvatar(backgroundColor: const Color(0xFFF1F6F1), child: Icon(icon, color: const Color(0xFF006D5B))),
-        const SizedBox(height: 12),
-        Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-      ]),
     ),
   );
 }
 
-  Widget _buildBookingCard(String title, String time, String status, Color stBg, Color stColor, IconData icon) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24)),
-      child: Row(children: [
-        CircleAvatar(backgroundColor: const Color(0xFFF1F6F1), child: Icon(icon, color: const Color(0xFF006D5B), size: 20)),
-        const SizedBox(width: 16),
-        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(title, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 15)),
-          Text(time, style: const TextStyle(color: Colors.black38, fontSize: 13, height: 1.2)),
-        ])),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-          decoration: BoxDecoration(color: stBg, borderRadius: BorderRadius.circular(10)),
-          child: Text(status, style: TextStyle(color: stColor, fontSize: 11, fontWeight: FontWeight.w900)),
-        )
-      ]),
-    );
-  }
-
-  Widget _buildWalletCard() {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24)),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Text('Care Wallet', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
-          Icon(Icons.account_balance_wallet_outlined, color: Colors.black26),
-        ]),
-        const SizedBox(height: 16),
-        const Text('AVAILABLE CREDITS', style: TextStyle(color: Colors.black38, fontSize: 11, fontWeight: FontWeight.w900)),
-        const Text('\$1,240.50', style: TextStyle(fontSize: 34, fontWeight: FontWeight.w900, color: Color(0xFF006D5B))),
-        const SizedBox(height: 20),
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFE2E9E2),
-              foregroundColor: Colors.black87,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              padding: const EdgeInsets.symmetric(vertical: 18),
-              elevation: 0,
+// Your exact logic converted into a reusable helper to keep code clean
+Widget _buildSingleEventCard({
+  required String day,
+  required String date,
+  required String tag,
+  required Color tagColor,
+  required String time,
+  required String title,
+  required String location,
+  required IconData bgIcon,
+}) {
+  return Container(
+    width: double.infinity,
+    decoration: BoxDecoration(
+      color: const Color(0xFF18181B),
+      borderRadius: BorderRadius.circular(20),
+      border: Border.all(color: const Color(0xFF27272A)),
+    ),
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: Stack(
+        children: [
+          // Subtle background decorative element
+          Positioned(
+            right: -10,
+            top: -10,
+            child: Icon(
+              bgIcon,
+              size: 80,
+              color: tagColor.withOpacity(0.05),
             ),
-            child: const Text('Add Funds', style: TextStyle(fontWeight: FontWeight.w900)),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                // Event Date/Icon Box
+                Container(
+                  height: 60,
+                  width: 54,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF09090B),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: const Color(0xFF27272A)),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(day, 
+                        style: TextStyle(color: const Color(0xFFA78BFA), fontSize: 10, fontWeight: FontWeight.bold)),
+                      Text(date, 
+                        style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900)),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 16),
+                
+                // Event Details
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: tagColor.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(tag, 
+                              style: TextStyle(color: tagColor, fontSize: 8, fontWeight: FontWeight.w900)),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(time, 
+                            style: const TextStyle(color: Color(0xFF71717A), fontSize: 11, fontWeight: FontWeight.w600)),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        title,
+                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 15),
+                      ),
+                      const SizedBox(height: 2),
+                      Row(
+                        children: [
+                          const Icon(Icons.location_on_outlined, color: Color(0xFF71717A), size: 12),
+                          const SizedBox(width: 4),
+                          Text(location, 
+                            style: const TextStyle(color: Color(0xFF71717A), fontSize: 12)),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Premium Action Button
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Text(
+                    "Join",
+                    style: TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.w900),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+
+Widget _buildMedicineRemainder() {
+  return Container(
+    width: double.infinity,
+    padding: const EdgeInsets.all(20),
+    decoration: BoxDecoration(
+      color: const Color(0xFF18181B),
+      borderRadius: BorderRadius.circular(24),
+      border: Border.all(color: const Color(0xFF27272A)),
+    ),
+    child: Column(
+      children: [
+        // Top Summary Row
+        Row(
+          children: [
+            // Compact Progress Ring
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                SizedBox(
+                  width: 40,
+                  height: 40,
+                  child: CircularProgressIndicator(
+                    value: 0.66,
+                    strokeWidth: 4,
+                    backgroundColor: const Color(0xFF09090B),
+                    valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF34D399)),
+                  ),
+                ),
+                const Text("2/3", 
+                  style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w900)),
+              ],
+            ),
+            const SizedBox(width: 16),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                Text("Medication Schedule", 
+                  style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w900)),
+                Text("Your next dose is at 9:00 PM", 
+                  style: TextStyle(color: Color(0xFF71717A), fontSize: 11)),
+              ],
+            ),
+            const Spacer(),
+            const Icon(Icons.arrow_forward_ios_rounded, color: Color(0xFF3F3F46), size: 14),
+          ],
+        ),
+        const SizedBox(height: 20),
+        
+        // Horizontal Dosage Cards
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          physics: const BouncingScrollPhysics(),
+          child: Row(
+            children: [
+              _buildMedBento("Metformin", "8:30 AM", true),
+              const SizedBox(width: 12),
+              _buildMedBento("Multivitamins", "1:30 PM", true),
+              const SizedBox(width: 12),
+              _buildMedBento("Vitamin D3", "9:00 PM", false),
+            ],
           ),
         ),
-      ]),
-    );
-  }
+      ],
+    ),
+  );
+}
 
-Widget _buildSupportItem(String title, String sub, Color bg, String? img, BuildContext context) {
-  return InkWell(
-    borderRadius: BorderRadius.circular(16),
+Widget _buildMedBento(String name, String time, bool isTaken) {
+  return Container(
+    width: 130,
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+      color: isTaken ? const Color(0xFF09090B).withOpacity(0.5) : const Color(0xFF09090B),
+      borderRadius: BorderRadius.circular(16),
+      border: Border.all(
+        color: isTaken ? const Color(0xFF18181B) : const Color(0xFF27272A),
+      ),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Icon(
+              isTaken ? Icons.check_circle_rounded : Icons.radio_button_unchecked, 
+              color: isTaken ? const Color(0xFF34D399) : const Color(0xFFA78BFA), 
+              size: 16,
+            ),
+            Text(time, style: const TextStyle(color: Color(0xFF52525B), fontSize: 10, fontWeight: FontWeight.bold)),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Text(
+          name,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            color: isTaken ? const Color(0xFF71717A) : Colors.white,
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+            decoration: isTaken ? TextDecoration.lineThrough : null,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+
+Widget _buildCategoryItem(String title, IconData icon, BuildContext context) {
+  return GestureDetector(
     onTap: () {
-      if (title == 'Peer Support Chat') {
+      if (title == "More") {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) => const LuminousChatScreen(),
-          ),
+          MaterialPageRoute(builder: (context) => ServicesPage()),
         );
       }
     },
-    child: Container(
+    child: Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: const Color(0xFF18181B),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color(0xFF27272A)),
+          ),
+          child: Icon(icon, color: const Color(0xFFA78BFA), size: 28),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          title,
+          style: const TextStyle(
+            color: Color(0xFFA1A1AA),
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+  Widget _buildActiveStatusCard() {
+    return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: bg,
+        color: const Color(0xFF1E1E22),
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFF3F3F46)),
       ),
       child: Row(
         children: [
-          CircleAvatar(
-            backgroundColor: img == null ? const Color(0xFFFFEAB4) : Colors.transparent,
-            backgroundImage: img != null ? NetworkImage(img) : null,
-            child: img == null ? const Icon(Icons.people, color: Colors.orange) : null,
-          ),
+          const CircleAvatar(radius: 24, backgroundColor: Color(0xFF7C3AED), child: Icon(Icons.person, color: Colors.white)),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: const TextStyle(fontWeight: FontWeight.w900)),
-                Text(sub, style: const TextStyle(color: Colors.black38, fontSize: 12)),
+              children: const [
+                Text("Nurse Sunita is arriving", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
+                Text("Scheduled for 4:00 PM today", style: TextStyle(color: Color(0xFF71717A), fontSize: 12)),
               ],
             ),
           ),
-          const Icon(Icons.chevron_right, color: Colors.black26),
+          const Icon(Icons.call, color: Color(0xFFA78BFA), size: 20),
         ],
       ),
+    );
+  }
+
+Widget _buildPromoBanner(BuildContext context) {
+  return Container(
+    width: double.infinity,
+    height: 160,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(20),
+      gradient: const LinearGradient(
+        colors: [Color(0xFF2E1065), Color(0xFF7C3AED)],
+      ),
+    ),
+    child: Stack(
+      children: [
+        Positioned(
+          right: -20,
+          bottom: -20,
+          child: Icon(
+            Icons.health_and_safety,
+            size: 150,
+            color: Colors.white.withOpacity(0.1),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Health Checkup\n@ 49% OFF",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              const Spacer(),
+              SizedBox(
+                height: 40,
+                child: ElevatedButton(
+                  onPressed: () {
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: const Text(
+                    "Book Now",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     ),
   );
 }
 
-  Widget _buildSOSCard() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(color: const Color(0xFFFFF1F1), borderRadius: BorderRadius.circular(28)),
-      child: Column(children: [
-        const Row(children: [
-          CircleAvatar(backgroundColor: Color(0xFFE53935), child: Icon(Icons.emergency, color: Colors.white, size: 20)),
-          SizedBox(width: 16),
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('SOS Emergency', style: TextStyle(fontWeight: FontWeight.w900, color: Color(0xFFB71C1C))),
-            Text('Immediate help dispatch', style: TextStyle(color: Colors.redAccent, fontSize: 12)),
-          ]),
-        ]),
-        const SizedBox(height: 20),
-        Container(
-          width: double.infinity,
-          height: 64,
-          decoration: BoxDecoration(
-            color: const Color(0xFFE53935),
-            borderRadius: BorderRadius.circular(18),
-            boxShadow: [BoxShadow(color: Colors.red.withValues(alpha: 0.3), blurRadius: 15, offset: const Offset(0, 8))],
-          ),
-          alignment: Alignment.center,
-          child: const Text('HOLD FOR 3S', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 18)),
-        ),
-      ]),
-    );
-  }
-
   Widget _buildBottomNav() {
-    return Container(
-      height: 90,
-      decoration: BoxDecoration(color: Colors.white, border: Border(top: BorderSide(color: Colors.black.withValues(alpha: 0.05)))),
-      child: BottomNavigationBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: const Color(0xFF006D5B),
-        unselectedItemColor: Colors.black26,
-        currentIndex: 0,
-        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 11),
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.medical_services_outlined), label: 'Services'),
-          BottomNavigationBarItem(icon: Icon(Icons.people_outline), label: 'Community'),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Profile'),
-        ],
-      ),
+    return BottomNavigationBar(
+      backgroundColor: const Color(0xFF0F0F12),
+      type: BottomNavigationBarType.fixed,
+      selectedItemColor: const Color(0xFFA78BFA),
+      unselectedItemColor: const Color(0xFF71717A),
+      items: const [
+        BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: "Home"),
+        BottomNavigationBarItem(icon: Icon(Icons.calendar_month_outlined), label: "Bookings"),
+        BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), label: "Help"),
+        BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: "Profile"),
+      ],
     );
   }
 }

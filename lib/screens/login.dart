@@ -1,232 +1,172 @@
 import 'package:flutter/material.dart';
 import 'otp_screen.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class ProfessionalLoginPage extends StatefulWidget {
+  const ProfessionalLoginPage({super.key});
+
+  @override
+  State<ProfessionalLoginPage> createState() => _ProfessionalLoginPageState();
+}
+
+class _ProfessionalLoginPageState extends State<ProfessionalLoginPage> {
+  final TextEditingController _phoneController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F7F4), // Base background
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            child: Container(
-              // Increased horizontal margin to 12 makes it much wider
-              // maxWidth ensures it looks good on tablets/web too
-              constraints: const BoxConstraints(maxWidth: 480), 
-              margin: const EdgeInsets.symmetric(horizontal: 12), 
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 50),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF1F5F1), // Card background
-                borderRadius: BorderRadius.circular(48), // Slightly more rounded for the width
-              ),
+      backgroundColor: const Color(0xFF09090B),
+      // Use resizeToAvoidBottomInset to prevent keyboard layout issues
+      resizeToAvoidBottomInset: true, 
+      body: SingleChildScrollView( // Added scroll view to prevent overflow on small screens
+        child: Column(
+          children: [
+            // Top Image Section
+            Stack(
+              children: [
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.35,
+                  width: double.infinity,
+                  child: Image.network(
+                    'https://img.freepik.com/free-photo/close-up-senior-couple-while-learning_23-2149072445.jpg?semt=ais_hybrid&w=740&q=80',
+                    fit: BoxFit.cover,
+                    // Subtle loading placeholder
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Container(color: const Color(0xFF18181B));
+                    },
+                  ),
+                ),
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.35,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        const Color(0xFF09090B).withOpacity(0.8),
+                        const Color(0xFF09090B),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 10),
-                  // Logo
                   const Text(
-                    'Elders App',
+                    "India's #1 Elder Care App",
                     style: TextStyle(
-                      color: Color(0xFF006D5B),
-                      fontSize: 28,
+                      color: Color(0xFFA78BFA),
+                      fontSize: 12,
                       fontWeight: FontWeight.w900,
-                      letterSpacing: -1.2,
+                      letterSpacing: 1.2,
                     ),
                   ),
-                  const SizedBox(height: 24),
-                  // Heading
+                  const SizedBox(height: 8),
                   const Text(
-                    'Sign In',
-                    style: TextStyle(
-                      color: Color(0xFF1E1E1E),
-                      fontSize: 42, // Slightly larger to match wider layout
-                      fontWeight: FontWeight.w900,
-                      height: 1.0,
-                    ),
+                    "Log in or sign up",
+                    style: TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.w900),
                   ),
-                  const SizedBox(height: 12),
-                  // Subheading
-                  const Text(
-                    'Your journey to vitality starts here.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.black45,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: -0.2,
-                    ),
-                  ),
-                  const SizedBox(height: 50),
+                  const SizedBox(height: 32),
 
-                  // Phone Number Label
-                  const Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 4, bottom: 12),
-                      child: Text(
-                        'Phone Number',
-                        style: TextStyle(
-                          color: Color(0xFF1E1E1E),
-                          fontSize: 15,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
+                  // Phone Input Box
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: const Color(0xFF27272A)),
+                      color: const Color(0xFF121215),
                     ),
-                  ),
-                  // Phone Input
-                  TextField(
-                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
-                    decoration: InputDecoration(
-                      hintText: '+1 (555) 000-0000',
-                      hintStyle: const TextStyle(color: Color(0xFFAAB8AA), fontWeight: FontWeight.w500),
-                      prefixIcon: const Padding(
-                        padding: EdgeInsets.only(left: 16, right: 10),
-                        child: Icon(Icons.phone_rounded, color: Color(0xFF5A6A5A), size: 24),
-                      ),
-                      filled: true,
-                      fillColor: const Color(0xFFE2E9E2),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(26),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(vertical: 24),
-                    ),
-                  ),
-                  const SizedBox(height: 28),
-
-                  // Primary Button
-InkWell(
-  borderRadius: BorderRadius.circular(24),
-  onTap: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const OtpScreen(),
-      ),
-    );
-  },
-  child: Container(
-    width: double.infinity,
-    height: 72,
-    decoration: BoxDecoration(
-      color: const Color(0xFF006D5B),
-      borderRadius: BorderRadius.circular(24),
-      boxShadow: [
-        BoxShadow(
-          color: const Color(0xFF006D5B).withOpacity(0.18),
-          blurRadius: 15,
-          offset: const Offset(0, 8),
-        ),
-      ],
-    ),
-    child: const Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          'Get Verification Code',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        SizedBox(width: 12),
-        Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 22),
-      ],
-    ),
-  ),
-),
-                  const SizedBox(height: 48),
-
-                  // Divider Section
-                  Row(
-                    children: [
-                      Expanded(child: Divider(color: Colors.black.withOpacity(0.06), thickness: 2)),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20),
-                        child: Text(
-                          'OR CONTINUE WITH',
-                          style: TextStyle(
-                            color: Colors.black38,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 1.0,
+                    child: Row(
+                      children: [
+                        // Fixed PNG Flag
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(2),
+                          child: Image.network(
+                            'https://flagcdn.com/w40/in.png',
+                            width: 24,
                           ),
                         ),
+                        const SizedBox(width: 12),
+                        const Text(
+                          "+91",
+                          style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        const Icon(Icons.keyboard_arrow_down, color: Color(0xFF71717A), size: 18),
+                        
+                        // FIXED: Simple Vertical Line instead of VerticalDivider
+                        Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 12),
+                          height: 24,
+                          width: 1,
+                          color: const Color(0xFF27272A),
+                        ),
+
+                        Expanded(
+                          child: TextField(
+                            controller: _phoneController,
+                            keyboardType: TextInputType.phone,
+                            style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                            decoration: const InputDecoration(
+                              hintText: "Mobile Number",
+                              hintStyle: TextStyle(color: Color(0xFF52525B), fontSize: 16, fontWeight: FontWeight.normal),
+                              border: InputBorder.none,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+                  
+                  // Continue Button
+                  SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: ElevatedButton(
+                      onPressed: () {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => OtpScreen(phoneNumber: "+91 ${_phoneController.text}"),
+    ),
+  );
+},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFA78BFA),
+                        foregroundColor: Colors.black,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        elevation: 0,
                       ),
-                      Expanded(child: Divider(color: Colors.black.withOpacity(0.06), thickness: 2)),
-                    ],
+                      child: const Text("Continue", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900)),
+                    ),
                   ),
-                  const SizedBox(height: 35),
-
-                  // Social Buttons
-                  Row(
-                    children: [
-                      Expanded(child: _buildSocialBtn('Google', Colors.white, Colors.black87, Icons.g_mobiledata_rounded)),
-                      const SizedBox(width: 18),
-                      Expanded(child: _buildSocialBtn('Apple', const Color(0xFF1A1A1A), Colors.white, Icons.apple_rounded)),
-                    ],
+                  
+                  const SizedBox(height: 40),
+                  
+                  // Footer Policy
+                  Center(
+                    child: Opacity(
+                      opacity: 0.5,
+                      child: const Text(
+                        "By continuing, you agree to our Terms & Privacy Policy",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.white, fontSize: 11),
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: 48),
-
-                  // Footer Links
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _footerText('PRIVACY POLICY'),
-                      const SizedBox(width: 32),
-                      _footerText('TERMS OF SERVICE'),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
-          ),
+          ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        backgroundColor: const Color(0xFFFFB300),
-        elevation: 0, // Flat look matches the image flutter_01.png
-        shape: const CircleBorder(),
-        child: const Icon(Icons.question_mark_rounded, color: Color(0xFF4A3400), size: 30),
-      ),
-    );
-  }
-
-  Widget _buildSocialBtn(String label, Color bg, Color text, IconData icon) {
-    return Container(
-      height: 68,
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(24),
-        border: bg == Colors.white ? Border.all(color: Colors.black.withOpacity(0.05), width: 1.5) : null,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: text, size: 34),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: TextStyle(color: text, fontWeight: FontWeight.w800, fontSize: 16),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _footerText(String text) {
-    return Text(
-      text,
-      style: const TextStyle(
-        color: Colors.black38,
-        fontSize: 12,
-        fontWeight: FontWeight.w900,
-        letterSpacing: 0.5,
       ),
     );
   }

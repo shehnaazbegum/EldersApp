@@ -1,34 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart'; 
 import 'screens/onboarding.dart';
-final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() {
-  runApp(const LuminousApp());
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+    statusBarIconBrightness: Brightness.light,
+  ));
+  runApp(const ElderCareApp());
 }
 
-class LuminousApp extends StatelessWidget {
-  const LuminousApp({super.key});
+class ElderCareApp extends StatelessWidget {
+  const ElderCareApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
-
       theme: ThemeData(
-        scaffoldBackgroundColor: const Color(0xFFF3F7F3),
-
-        // 🔥 Apply Sora font globally
-        textTheme: GoogleFonts.soraTextTheme(),
-
-        // Optional: customize further
-        primaryColor: const Color(0xFF0F766E),
+        brightness: Brightness.dark,
+        useMaterial3: true,
+        // Using 'Outfit' - it's clean, modern, and very 'premium utility'
+        textTheme: GoogleFonts.outfitTextTheme(
+          ThemeData.dark().textTheme,
+        ),
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF0F766E),
+          seedColor: const Color(0xFFA78BFA),
+          brightness: Brightness.dark,
+          surface: const Color(0xFF09090B),
         ),
       ),
-
       home: const OnboardingScreen(),
     );
   }
