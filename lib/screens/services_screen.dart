@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'service_detail_screen.dart';
 
 class ServicesPage extends StatelessWidget {
   const ServicesPage({super.key});
@@ -6,219 +7,209 @@ class ServicesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF09090B), // Consistent Deep Black
+      backgroundColor: const Color(0xFF09090B),
       appBar: AppBar(
         backgroundColor: const Color(0xFF09090B),
         elevation: 0,
+        centerTitle: false,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 18),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
           "All Services",
           style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search, color: Colors.white, size: 20),
+            onPressed: () {},
+          ),
+          const SizedBox(width: 8),
+        ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "Professional Care & Support",
-              style: TextStyle(color: Color(0xFF71717A), fontSize: 13, fontWeight: FontWeight.w600),
+      body: Column(
+        children: [
+          // 1. Sticky Category Anchor Bar (High-Density Navigation)
+          Container(
+            height: 56,
+            decoration: const BoxDecoration(
+              border: Border(bottom: BorderSide(color: Color(0xFF18181B), width: 1)),
             ),
-            const SizedBox(height: 24),
-            
-            // Large Vertical Service Stack
-            _buildServiceBentoCard(
-              title: "Grocery Delivery",
-              desc: "Get fresh vegetables and household essentials delivered to your door.",
-              icon: Icons.shopping_basket_outlined,
-              accentColor: const Color(0xFF34D399),
-              imageUrl: "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80",
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              children: [
+                _buildCategoryAnchor("Nursing", true),
+                _buildCategoryAnchor("Physiotherapy", false),
+                _buildCategoryAnchor("Maintenance", false),
+                _buildCategoryAnchor("Groceries", false),
+              ],
             ),
-            const SizedBox(height: 16),
-            
-            _buildServiceBentoCard(
-              title: "Nursing Care",
-              desc: "Qualified nurses for injections, dressing, and 24/7 medical monitoring.",
-              icon: Icons.medical_services_outlined,
-              accentColor: const Color(0xFFA78BFA),
-              imageUrl: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=800&q=80",
+          ),
+
+          // 2. Multi-Filter Layer (Marketplace Standard)
+          Container(
+            height: 48,
+            padding: const EdgeInsets.only(bottom: 8),
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              children: [
+                _buildFilterChip("Sort By", Icons.swap_vert_rounded),
+                _buildFilterChip("Rating 4.0+", null),
+                _buildFilterChip("Price: Low to High", null),
+              ],
             ),
-            const SizedBox(height: 16),
-            
-            _buildServiceBentoCard(
-              title: "Home Maintenance",
-              desc: "Expert help for plumbing, electrical fixes, and appliance repairs.",
-              icon: Icons.handyman_outlined,
-              accentColor: const Color(0xFF60A5FA),
-              imageUrl: "https://images.unsplash.com/photo-1581578731522-745d05cb9704?auto=format&fit=crop&w=800&q=80",
+          ),
+
+          // 3. Main Content
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.all(20),
+              children: [
+                _buildSectionHeader("Medical & Nursing"),
+                _buildEliteServiceRow(
+                  context,
+                  "General Nursing (1hr)",
+                  "Vitals check, medication, and wound dressing by certified nurses.",
+                  "₹299",
+                  "4.8 (1.2k+)",
+                  "https://sukinohealthcare.com/wp-content/uploads/2024/09/Nursing-Care-for-Elderly-Parents.jpg",
+                ),
+                _buildDivider(),
+                _buildEliteServiceRow(
+                  context,
+                  "Post-Op Recovery",
+                  "Intensive 24/7 care for patients recovering from surgery.",
+                  "₹1,999",
+                  "4.9 (800+)",
+                  "https://thumbs.dreamstime.com/b/smiling-senior-patient-sitting-wheelchair-nurse-supporting-her-doctor-looking-elderly-patient-wheelchair-125353194.jpg",
+                ),
+                const SizedBox(height: 40),
+                
+                _buildSectionHeader("Industrial Maintenance"),
+                _buildEliteServiceRow(
+                  context,
+                  "Electrical Infrastructure",
+                  "Comprehensive inspection and repair of electrical networks.",
+                  "₹199",
+                  "4.7 (2k+)",
+                  "https://th-thumbnailer.cdn-si-edu.com/SvrtOCaBp6NbIiXaW_4tHrobbOk=/1026x684/filters:no_upscale()/https://tf-cmsv2-smithsonianmag-media.s3.amazonaws.com/filer/a2/c4/a2c467b3-c152-4edb-bb05-d7d52193812f/42-22507741.jpg",
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-            
-            _buildServiceBentoCard(
-              title: "Companion Support",
-              desc: "Friendly assistance for walks, hospital visits, and conversation.",
-              icon: Icons.people_outline_rounded,
-              accentColor: const Color(0xFFFBBF24),
-              imageUrl: "https://images.unsplash.com/photo-1581578731522-745d05cb9704?auto=format&fit=crop&w=800&q=80",
-            ),
-            
-            const SizedBox(height: 32),
-            
-            // Emergency Quick Action (High Contrast)
-            _buildEmergencyCallCard(),
-            const SizedBox(height: 32),
-          ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCategoryAnchor(String label, bool isActive) {
+    return Container(
+      margin: const EdgeInsets.only(right: 12),
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        border: isActive ? const Border(bottom: BorderSide(color: Colors.white, width: 2)) : null,
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: isActive ? Colors.white : const Color(0xFF71717A),
+          fontSize: 13,
+          fontWeight: isActive ? FontWeight.w900 : FontWeight.w600,
         ),
       ),
     );
   }
 
-  Widget _buildServiceBentoCard({
-    required String title,
-    required String desc,
-    required IconData icon,
-    required Color accentColor,
-    required String imageUrl,
-  }) {
+  Widget _buildFilterChip(String label, IconData? icon) {
     return Container(
-      width: double.infinity,
+      margin: const EdgeInsets.only(right: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: const Color(0xFF18181B), // Consistent with Dashboard card color
-        borderRadius: BorderRadius.circular(24),
+        color: const Color(0xFF18181B),
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(color: const Color(0xFF27272A)),
       ),
-      child: Column(
+      child: Row(
         children: [
-          // Image Header with Gradient Overlay
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(23)),
-                child: Image.network(
-                  imageUrl,
-                  height: 140,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              Positioned.fill(
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.transparent,
-                        const Color(0xFF18181B).withOpacity(0.9),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: accentColor.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Icon(icon, color: accentColor, size: 22),
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        color: Colors.white, 
-                        fontSize: 20, 
-                        fontWeight: FontWeight.w900
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  desc,
-                  style: const TextStyle(
-                    color: Color(0xFF71717A), 
-                    fontSize: 14, 
-                    height: 1.5,
-                    fontWeight: FontWeight.w500
-                  ),
-                ),
-                const SizedBox(height: 20),
-                // Premium Styled Action Button
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  alignment: Alignment.center,
-                  child: const Text(
-                    "Select Service",
-                    style: TextStyle(
-                      color: Colors.black, 
-                      fontSize: 15, 
-                      fontWeight: FontWeight.w900
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          if (icon != null) Icon(icon, color: const Color(0xFFA78BFA), size: 14),
+          if (icon != null) const SizedBox(width: 4),
+          Text(label, style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600)),
+          const SizedBox(width: 4),
+          const Icon(Icons.keyboard_arrow_down_rounded, color: Color(0xFF71717A), size: 14),
         ],
       ),
     );
   }
 
-  Widget _buildEmergencyCallCard() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: const Color(0xFF450A0A), // Deep Emergency Red
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color(0xFF991B1B)),
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.emergency_rounded, color: Color(0xFFF87171), size: 32),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text("Need Help Now?", 
-                  style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900)),
-                Text("Instant Emergency Support", 
-                  style: TextStyle(color: Color(0xFFF87171), fontSize: 12)),
-              ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF87171),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Text("SOS", 
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900)),
-          ),
-        ],
-      ),
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 24),
+      child: Text(title, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w900)),
     );
   }
+
+  Widget _buildEliteServiceRow(BuildContext context, String name, String desc, String price, String rating, String imgUrl) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(name, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w800)),
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  const Icon(Icons.star_rounded, color: Color(0xFFFBBF24), size: 14),
+                  const SizedBox(width: 4),
+                  Text(rating, style: const TextStyle(color: Color(0xFF71717A), fontSize: 11, fontWeight: FontWeight.w600)),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(desc, style: const TextStyle(color: Color(0xFF71717A), fontSize: 12, height: 1.4), maxLines: 2),
+              const SizedBox(height: 12),
+              Text(price, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w900)),
+            ],
+          ),
+        ),
+        const SizedBox(width: 20),
+        Stack(
+          alignment: Alignment.bottomCenter,
+          clipBehavior: Clip.none,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.network(imgUrl, width: 95, height: 95, fit: BoxFit.cover),
+            ),
+            Positioned(
+              bottom: -12,
+              child: GestureDetector(
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ServiceDetailScreen(serviceName: name, price: price))),
+                child: Container(
+                  width: 75,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.3), blurRadius: 8)],
+                  ),
+                  alignment: Alignment.center,
+                  child: const Text("ADD", style: TextStyle(color: Color(0xFF7C3AED), fontSize: 11, fontWeight: FontWeight.w900)),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDivider() => const Padding(
+    padding: EdgeInsets.symmetric(vertical: 24),
+    child: Divider(color: Color(0xFF18181B), thickness: 1),
+  );
 }
