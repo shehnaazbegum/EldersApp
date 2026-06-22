@@ -99,8 +99,8 @@ class HomePage extends StatelessWidget {
               const SizedBox(height: 32),
 
               // 👉 ADD THIS WHERE YOU WANT (after medicine remainder)
-_buildImageSection(),
-const SizedBox(height: 32),
+              _buildImageSection(),
+              const SizedBox(height: 32),
 
               // 6. NEW: Social Events (Premium Card Style)
               Row(
