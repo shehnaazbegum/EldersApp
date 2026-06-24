@@ -1,134 +1,115 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'dashboard_screen.dart';
 
-class OtpScreen extends StatefulWidget {
-  final String phoneNumber;
-  const OtpScreen({super.key, required this.phoneNumber});
+class OtpVerificationScreen extends StatefulWidget {
+  const OtpVerificationScreen({super.key});
 
   @override
-  State<OtpScreen> createState() => _OtpScreenState();
+  State<OtpVerificationScreen> createState() => _OtpVerificationScreenState();
 }
 
-class _OtpScreenState extends State<OtpScreen> {
-  final TextEditingController _otpController = TextEditingController();
+class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
+  final Color _primaryColor = const Color(0xFFEF4F5F);
+  int _secondsRemaining = 30;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _startTimer();
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_secondsRemaining > 0) {
+        setState(() => _secondsRemaining--);
+      } else {
+        timer.cancel();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF09090B),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(height: 20),
             const Text(
-              "OTP Verification",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-                fontWeight: FontWeight.w800,
-              ),
+              "Verify phone",
+              style: TextStyle(color: Colors.black87, fontSize: 28, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 8),
-            // Semi-transparent text for the phone number info
-            Opacity(
-              opacity: 0.6,
-              child: Text(
-                "We have sent a 4-digit OTP to ${widget.phoneNumber}",
-                style: const TextStyle(color: Colors.white, fontSize: 14),
-              ),
+            const SizedBox(height: 12),
+            Text(
+              "We sent a 6-digit OTP to your phone number",
+              style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
             ),
             const SizedBox(height: 40),
-
-            // Clean, Single-Line Input (Zomato Style)
-            Container(
-              decoration: BoxDecoration(
-                color: const Color(0xFF18181B),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFF27272A)),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: TextField(
-                controller: _otpController,
-                keyboardType: TextInputType.number,
-                maxLength: 4, // Swiggy/Zomato usually use 4 or 6 digits
-                autofocus: true,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 24, // Adds professional spacing between digits
+            
+            // OTP Input Fields with Auto-focus logic
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: List.generate(6, (index) => SizedBox(
+                width: 45,
+                child: TextField(
+                  textAlign: TextAlign.center,
+                  keyboardType: TextInputType.number,
+                  maxLength: 1,
+                  onChanged: (value) {
+                    if (value.length == 1) FocusScope.of(context).nextFocus();
+                    if (value.isEmpty) FocusScope.of(context).previousFocus();
+                  },
+                  decoration: InputDecoration(
+                    counterText: "",
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                    focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: _primaryColor, width: 2)),
+                  ),
                 ),
-                textAlign: TextAlign.center,
-                decoration: const InputDecoration(
-                  hintText: "0000",
-                  hintStyle: TextStyle(color: Color(0xFF3F3F46), letterSpacing: 24),
-                  border: InputBorder.none,
-                  counterText: "", // Removes the 0/4 counter text
-                ),
-              ),
+              )),
             ),
-
-            const SizedBox(height: 32),
-
-            // Verify Button
+            
+            const SizedBox(height: 40),
             SizedBox(
               width: double.infinity,
-              height: 56,
+              height: 50,
               child: ElevatedButton(
-                      onPressed: () {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => HomePage(),
-    ),
-  );
-},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFA78BFA),
-                  foregroundColor: Colors.black,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 0,
-                ),
-                child: const Text(
-                  "Verify & Proceed",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
+                onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomePage())), // Navigate to Dashboard
+                style: ElevatedButton.styleFrom(backgroundColor: _primaryColor, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+                child: const Text("Verify OTP", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               ),
             ),
-
-            const SizedBox(height: 24),
-
-            // Resend Section
+            
+            const SizedBox(height: 20),
+            // Resend OTP with Countdown Timer
             Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    "Didn't receive code? ",
-                    style: TextStyle(color: Color(0xFF71717A), fontSize: 14),
-                  ),
-                  TextButton(
-                    onPressed: () {},
-                    child: const Text(
-                      "Resend",
-                      style: TextStyle(
-                        color: Color(0xFFA78BFA),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
+              child: TextButton(
+                onPressed: _secondsRemaining == 0 ? () {
+                  setState(() => _secondsRemaining = 30);
+                  _startTimer();
+                } : null,
+                child: Text(
+                  _secondsRemaining > 0 ? "Resend OTP in $_secondsRemaining s" : "Resend OTP",
+                  style: TextStyle(color: _secondsRemaining == 0 ? _primaryColor : Colors.grey, fontWeight: FontWeight.bold),
+                ),
               ),
             ),
           ],
