@@ -22,17 +22,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     {
       "title": "Care with Dignity\nand Expertise.",
       "subtitle": "Professional, compassionate health support designed specifically for your loved ones.",
-      "image": "https://img.freepik.com/premium-photo/elderly-couple-using-mobile-photo-communication_1000823-72412.jpg?semt=ais_hybrid&w=740&q=80",
+      "image": "assests/images/OldPeople.jpg",
     },
     {
       "title": "Verified Care\nYou Can Trust.",
       "subtitle": "Every specialist is background-checked and trained to provide premium care.",
-      "image": "https://static.vecteezy.com/system/resources/thumbnails/079/851/995/small/happy-elderly-indian-woman-using-smartphone-at-home-free-photo.jpg",
+      "image": "assests/images/SeniorsLaughingGroup.jpg",
     },
     {
       "title": "Safety at Your\nFingertips.",
       "subtitle": "Real-time updates, secure health monitoring, and instant support.",
-      "image": "https://www.loestro.com/wp-content/uploads/2024/05/0OVqG8jnoiVtGBhXr-EqtaRv.jpeg",
+      "image": "assests/images/SmilingGrandma.jpg",
     },
   ];
 
@@ -95,7 +95,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   margin: const EdgeInsets.symmetric(horizontal: 24),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
-                    image: DecorationImage(image: NetworkImage(_onboardingData[i]["image"]!), fit: BoxFit.cover),
+                    image: DecorationImage(image: AssetImage(_onboardingData[i]["image"]!), fit: BoxFit.cover),
                   ),
                 ),
               ),
