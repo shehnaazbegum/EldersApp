@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'services_screen.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -144,49 +145,74 @@ class HomePage extends StatelessWidget {
     ),
   );
 
-  Widget _buildServiceGrid() {
-    final services = [
-      {"name": "Grocery", "icon": Icons.shopping_basket, "color": const Color(0xFFFFF1F1)},
-      {"name": "Pharmacy", "icon": Icons.medication, "color": const Color(0xFFF1F7FF)},
-      {"name": "Hospital", "icon": Icons.local_hospital, "color": const Color(0xFFF1FFF5)},
-      {"name": "Nursing", "icon": Icons.personal_injury, "color": const Color(0xFFFFF9F1)},
-      {"name": "Lab Test", "icon": Icons.science, "color": const Color(0xFFF5F1FF)},
-      {"name": "Help Desk", "icon": Icons.support_agent, "color": const Color(0xFFF1FEFF)},
-      {"name": "Elder Care", "icon": Icons.elderly, "color": const Color(0xFFFFF1F8)},
-      {"name": "More", "icon": Icons.grid_view_rounded, "color": const Color(0xFFF5F5F5)},
-    ];
+Widget _buildServiceGrid() {
+  final services = [
+    {"name": "Grocery", "icon": Icons.shopping_basket, "color": const Color(0xFFFFF1F1)},
+    {"name": "Pharmacy", "icon": Icons.medication, "color": const Color(0xFFF1F7FF)},
+    {"name": "Hospital", "icon": Icons.local_hospital, "color": const Color(0xFFF1FFF5)},
+    {"name": "Nursing", "icon": Icons.personal_injury, "color": const Color(0xFFFFF9F1)},
+    {"name": "Lab Test", "icon": Icons.science, "color": const Color(0xFFF5F1FF)},
+    {"name": "Help Desk", "icon": Icons.support_agent, "color": const Color(0xFFF1FEFF)},
+    {"name": "Elder Care", "icon": Icons.elderly, "color": const Color(0xFFFFF1F8)},
+    {"name": "More", "icon": Icons.grid_view_rounded, "color": const Color(0xFFF5F5F5)},
+  ];
 
-    return GridView.builder(
-      padding: EdgeInsets.zero,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 4, 
-        mainAxisSpacing: 16, 
-        crossAxisSpacing: 12,
-        childAspectRatio: 0.85,
-      ),
-      itemCount: services.length,
-      itemBuilder: (ctx, i) => Column(
+  return GridView.builder(
+    padding: EdgeInsets.zero,
+    shrinkWrap: true,
+    physics: const NeverScrollableScrollPhysics(),
+    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: 4,
+      mainAxisSpacing: 16,
+      crossAxisSpacing: 12,
+      childAspectRatio: 0.85,
+    ),
+    itemCount: services.length,
+    itemBuilder: (ctx, i) => InkWell(
+      onTap: () {
+        if (services[i]["name"] == "More") {
+          Navigator.push(
+            ctx,
+            MaterialPageRoute(builder: (context) => const ServicesScreen()),
+          );
+        } else {
+          // Handle other service taps here
+          print("${services[i]["name"]} tapped");
+        }
+      },
+      borderRadius: BorderRadius.circular(16),
+      child: Column(
         children: [
           Container(
             padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(color: services[i]["color"] as Color, borderRadius: BorderRadius.circular(16)),
+            decoration: BoxDecoration(
+              color: services[i]["color"] as Color,
+              borderRadius: BorderRadius.circular(16),
+            ),
             child: Icon(services[i]["icon"] as IconData, color: _primaryColor, size: 26),
           ),
           const SizedBox(height: 8),
-          Text(services[i]["name"] as String, textAlign: TextAlign.center, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.black87)),
+          Text(
+            services[i]["name"] as String,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: Colors.black87,
+            ),
+          ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildHorizontalReorderList() => SizedBox(
     height: 120,
     child: ListView.separated(
       scrollDirection: Axis.horizontal,
       itemCount: 3,
-      separatorBuilder: (_, __) => const SizedBox(width: 12),
+      separatorBuilder: (_, _) => const SizedBox(width: 12),
       itemBuilder: (ctx, i) => Container(
         width: 240,
         padding: const EdgeInsets.all(16),
