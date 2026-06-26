@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'services_screen.dart';
+import 'profile_screen.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -12,7 +13,7 @@ class HomePage extends StatelessWidget {
       backgroundColor: const Color(0xFFF8F8F8),
       body: CustomScrollView(
         slivers: [
-          _buildSliverAppBar(),
+          _buildSliverAppBar(context),
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -94,7 +95,7 @@ class HomePage extends StatelessWidget {
   }
 
   // --- Retained Components ---
-  Widget _buildSliverAppBar() => SliverAppBar(
+  Widget _buildSliverAppBar(BuildContext context) => SliverAppBar(
     pinned: true,
     backgroundColor: Colors.white,
     elevation: 2,
@@ -109,7 +110,21 @@ class HomePage extends StatelessWidget {
         Text("Elderly Ave, Residency Road, Bangalore", style: TextStyle(color: Colors.grey.shade600, fontSize: 11), overflow: TextOverflow.ellipsis),
       ],
     ),
-    actions: const [Padding(padding: EdgeInsets.only(right: 16), child: CircleAvatar(backgroundColor: Color(0xFFF2F2F2), child: Icon(Icons.person, color: Colors.black54)))],
+    actions: [
+      Padding(
+        padding: const EdgeInsets.only(right: 16),
+        child: GestureDetector(
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const ProfileScreen()),
+          ),
+          child: const CircleAvatar(
+            backgroundColor: Color(0xFFF2F2F2),
+            child: Icon(Icons.person, color: Colors.black54),
+          ),
+        ),
+      ),
+    ],
     bottom: PreferredSize(
       preferredSize: const Size.fromHeight(60),
       child: Padding(
